@@ -22,7 +22,6 @@ for item in soup.find_all(class_="title"):
     author = User(article_html, "article", link)
     up.add_user(author)
     print(link, author.id)
-
     for comment_html in article_html.find_all(class_="push"):
        commenter = User(comment_html)
        up.add_user(commenter)

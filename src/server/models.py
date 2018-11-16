@@ -3,6 +3,7 @@
 import pickle
 import os
 import re
+from collections import defaultdict
 
 RE_IP = re.compile(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}")
 
@@ -36,7 +37,7 @@ class UserPool:
 
     def __init__(self):
         self.users = {}
-        self.ips = {}
+        self.ips = defaultdict(set)
 
     def __get_path(self, file_path):
         if not file_path:
@@ -51,12 +52,12 @@ class UserPool:
             return
         with open(file_path, "rb") as user_pool_file:
             user_pool = pickle.load(user_pool_file)
-            self.users = user_pool["users"]
-            self.ips = user_pool["ips"]
+            self.users = user_pool.users
+            self.ips = user_pool.ips
 
     def save(self, file_path=None):
         with open(self.__get_path(file_path), "wb") as user_pool_file:
-            pickle.dump({"users": self.users, "ips": self.ips}, user_pool_file)
+            pickle.dump(self, user_pool_file)
 
     def add_user(self, user):
         existed_user = self.users.get(user.id)
@@ -68,5 +69,5 @@ class UserPool:
         self.users[user.id] = user
 
         for ip in new_ips:
-            self.ips[ip] = user.id
+            self.ips[ip] |= {user.id}
 
