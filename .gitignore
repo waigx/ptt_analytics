@@ -104,4 +104,8 @@ venv.bak/
 .mypy_cache/
 
 # pickle storage
-user_pool.pk
+*.pk
+
+# VIM
+.*.swp
+.*.swo
