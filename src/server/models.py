@@ -22,15 +22,16 @@ class User:
 
     def parse_user(self, content, content_type, url):
         def get_ip_from_text(text):
-            match_obj = RE_IP.search(text.string)
+            match_obj = RE_IP.search(text or "")
             return match_obj.group() if match_obj else ""
 
         if content_type == "comment":
             id = content.find(class_="push-userid").string.split()[0]
-            ip_container = content.find(class_="push-ipdatetime").string
+            ip_container = content.find(class_="push-ipdatetime")
             ip = get_ip_from_text(ip_container.string)
         elif content_type == "article":
-            id = next(content.find(class_="article-meta-value").strings).split()[0]
+            id_div = content.find(class_="article-meta-value")
+            id = next(id_div.strings).split()[0] if id_div else ""
             url_container = content.find(string=url)
             if url_container:
                 ip = get_ip_from_text(url_container.parent.parent.previous_sibling.string)
@@ -103,9 +104,11 @@ class Article:
         }
 
         for comment_html in content.find_all(class_="push"):
-            comment_tag = comment_html.find(class_="push-tag").string.strip()
-            user = User(comment_html)
-            users[comment_tag].append(user.id)
+            comment_div = comment_html.find(class_="push-tag")
+            if comment_div:
+                comment_tag = comment_div.string.strip()
+                user = User(comment_html)
+                users[comment_tag].append(user.id)
 
         return pos_users, neu_users, nag_users
 
@@ -134,7 +137,7 @@ class Progress:
     DEFAULT_FILE_NAME = "progress.pk"
 
     def __init__(self):
-        self.current_index = 999
+        self.current_index = 20000
 
     def load(self, file_path=None):
         file_path = get_path(file_path or self.DEFAULT_FILE_NAME)

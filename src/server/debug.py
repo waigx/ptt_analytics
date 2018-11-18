@@ -5,13 +5,13 @@ import requests
 import re
 from bs4 import BeautifulSoup
 
-#page = requests.get("https://www.ptt.cc/bbs/Gossiping/M.1513517665.A.7BA.html", cookies={"over18":"1"})
+#page = requests.get("https://www.ptt.cc/bbs/Gossiping/index20373.html", cookies={"over18":"1"})
 #bs = BeautifulSoup(page.content, "html.parser")
-#print(list(bs.find(class_="article-meta-value").strings))
+#print(list(div.find("a") for div in list(bs.find_all(class_="title"))))
 
-ap = ArticlePool()
-ap.load()
+#ap = ArticlePool()
+#ap.load()
 prg = Progress()
 prg.load()
-print([id.nag_users for id in ap.articles.values()])
+#print(len(ap.articles))
 print(prg.current_index)
